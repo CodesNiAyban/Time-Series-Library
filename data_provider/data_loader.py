@@ -18,7 +18,7 @@ warnings.filterwarnings('ignore')
 
 class Dataset_ETT_hour(Dataset):
     def __init__(self, args, root_path, flag='train', size=None,
-                 features='S', data_path='ETTh1.csv',
+                 features='S', data_path='BTCUSDT.csv',
                  target='OT', scale=True, timeenc=0, freq='h', seasonal_patterns=None):
         # size [seq_len, label_len, pred_len]
         self.args = args
@@ -206,7 +206,7 @@ class Dataset_ETT_minute(Dataset):
 
 class Dataset_Custom(Dataset):
     def __init__(self, args, root_path, flag='train', size=None,
-                 features='S', data_path='ETTh1.csv',
+                 features='S', data_path='BTCUSDT.csv',
                  target='OT', scale=True, timeenc=0, freq='h', seasonal_patterns=None):
         # size [seq_len, label_len, pred_len]
         self.args = args
@@ -243,7 +243,10 @@ class Dataset_Custom(Dataset):
         df_raw.columns: ['date', ...(other features), target feature]
         '''
         cols = list(df_raw.columns)
-        cols.remove(self.target)
+        if self.target in cols:
+            cols.remove(self.target)
+        else:
+            print(f"Warning: Target column '{self.target}' not found in dataset. Available columns: {cols}")
         cols.remove('date')
         df_raw = df_raw[['date'] + cols + [self.target]]
         num_train = int(len(df_raw) * 0.7)
@@ -309,7 +312,7 @@ class Dataset_Custom(Dataset):
 
 class Dataset_M4(Dataset):
     def __init__(self, args, root_path, flag='pred', size=None,
-                 features='S', data_path='ETTh1.csv',
+                 features='S', data_path='BTCUSDT.csv',
                  target='OT', scale=False, inverse=False, timeenc=0, freq='15min',
                  seasonal_patterns='Yearly'):
         # size [seq_len, label_len, pred_len]
